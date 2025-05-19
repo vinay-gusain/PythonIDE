@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import asyncio
@@ -20,7 +20,7 @@ app = FastAPI(title="PythonIDE Backend")
 # Get allowed origins from environment variable or use default
 ALLOWED_ORIGINS = os.getenv(
     "ALLOWED_ORIGINS",
-    "http://localhost:3000,http://localhost:5173,https://pythonide.vercel.app"
+    "http://localhost:3000,http://localhost:5173,https://pythonide.vercel.app,https://pythonide-frontend.vercel.app"
 ).split(",")
 
 # Configure CORS
@@ -31,6 +31,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add logging for CORS and WebSocket connections
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    logger.info(f"Incoming request: {request.method} {request.url}")
+    logger.info(f"Origin: {request.headers.get('origin')}")
+    response = await call_next(request)
+    return response
 
 # Store active WebSocket connections
 active_connections: Dict[str, Set[WebSocket]] = {}
@@ -71,7 +79,9 @@ async def execute_python_code(code: str) -> tuple[str, str]:
 
 @app.websocket("/ws/{session_id}")
 async def websocket_endpoint(websocket: WebSocket, session_id: str):
+    logger.info(f"WebSocket connection attempt from origin: {websocket.headers.get('origin')}")
     await websocket.accept()
+    logger.info(f"WebSocket connection accepted for session: {session_id}")
     
     if session_id not in active_connections:
         active_connections[session_id] = set()
