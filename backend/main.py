@@ -111,11 +111,18 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
                     
                     # Send stdout
                     if stdout:
-                        await send_json_message(websocket, "output", stdout)
+                        # Split into lines, strip whitespace, and send each line
+                        for line in stdout.splitlines():
+                            clean_line = line.strip()
+                            if clean_line:
+                                await send_json_message(websocket, "output", clean_line)
                     
                     # Send stderr
                     if stderr:
-                        await send_json_message(websocket, "error", stderr)
+                        for line in stderr.splitlines():
+                            clean_line = line.strip()
+                            if clean_line:
+                                await send_json_message(websocket, "error", clean_line)
 
                 except json.JSONDecodeError:
                     await send_json_message(websocket, "error", "Invalid message format")
