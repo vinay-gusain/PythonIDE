@@ -1,8 +1,7 @@
-import React, { useRef, useState, useCallback, useEffect } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import { Box, Button, Stack, IconButton, Tooltip } from '@mui/material';
 import { PlayArrow as RunIcon, ContentCopy as CopyIcon, Delete as ClearIcon } from '@mui/icons-material';
 import Editor, { Monaco } from '@monaco-editor/react';
-import * as monaco from 'monaco-editor';
 
 interface EditorProps {
   onRunCode: (code: string) => void;
@@ -19,36 +18,12 @@ def greet(name: str) -> str:
 # Try it out:
 print(greet("World"))`;
 
-// Register Python language
-monaco.languages.register({ id: 'python' });
-
 const CodeEditor: React.FC<EditorProps> = ({ onRunCode }) => {
-  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<any>(null);
   const monacoRef = useRef<Monaco | null>(null);
   const [code, setCode] = useState<string>(DEFAULT_CODE);
 
-  useEffect(() => {
-    if (containerRef.current) {
-      editorRef.current = monaco.editor.create(containerRef.current, {
-        value: '# Write your Python code here\nprint("Hello, World!")',
-        language: 'python',
-        theme: 'vs-dark',
-        automaticLayout: true,
-        minimap: { enabled: false },
-        fontSize: 14,
-        lineNumbers: 'on',
-        scrollBeyondLastLine: false,
-        tabSize: 4,
-      });
-    }
-
-    return () => {
-      editorRef.current?.dispose();
-    };
-  }, []);
-
-  const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor, monaco: Monaco) => {
+  const handleEditorDidMount = (editor: any, monaco: Monaco) => {
     editorRef.current = editor;
     monacoRef.current = monaco;
 
@@ -77,67 +52,6 @@ const CodeEditor: React.FC<EditorProps> = ({ onRunCode }) => {
     // Add keyboard shortcuts
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
       handleRun();
-    });
-
-    // Configure Python language features
-    monaco.languages.python.pythonDefaults.setDiagnosticsOptions({
-      validate: true,
-      lint: {
-        enabled: true,
-      },
-    });
-
-    // Add custom completions
-    monaco.languages.registerCompletionItemProvider('python', {
-      triggerCharacters: ['.'],
-      provideCompletionItems: (model, position) => {
-        const word = model.getWordUntilPosition(position);
-        const range = {
-          startLineNumber: position.lineNumber,
-          endLineNumber: position.lineNumber,
-          startColumn: word.startColumn,
-          endColumn: word.endColumn,
-        };
-
-        // Add some common Python completions
-        const suggestions = [
-          {
-            label: 'print',
-            kind: monaco.languages.CompletionItemKind.Function,
-            insertText: 'print(${1:value})',
-            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-            documentation: 'Print objects to the text stream file.',
-            range: range,
-          },
-          {
-            label: 'def',
-            kind: monaco.languages.CompletionItemKind.Snippet,
-            insertText: [
-              'def ${1:function_name}(${2:parameters}):',
-              '\t"""${3:docstring}"""',
-              '\t${4:pass}',
-            ].join('\n'),
-            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-            documentation: 'Function definition',
-            range: range,
-          },
-          {
-            label: 'class',
-            kind: monaco.languages.CompletionItemKind.Snippet,
-            insertText: [
-              'class ${1:ClassName}:',
-              '\t"""${2:docstring}"""',
-              '\tdef __init__(self${3:, parameters}):',
-              '\t\t${4:pass}',
-            ].join('\n'),
-            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-            documentation: 'Class definition',
-            range: range,
-          },
-        ];
-
-        return { suggestions };
-      },
     });
   };
 

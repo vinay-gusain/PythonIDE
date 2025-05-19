@@ -1,12 +1,5 @@
-// Add type declaration for Vite's import.meta.env
-interface ImportMetaEnv {
-  readonly VITE_BACKEND_URL: string;
-  readonly VITE_WS_URL: string;
-}
-
-interface ImportMeta {
-  readonly env: ImportMetaEnv;
-}
+// Environment variables are typed in vite-env.d.ts
+/// <reference types="./vite-env.d.ts" />
 
 const config = {
   backendUrl: import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000',
