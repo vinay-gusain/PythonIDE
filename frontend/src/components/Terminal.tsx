@@ -64,11 +64,11 @@ const Terminal: React.FC<TerminalProps> = ({ output }) => {
   }, []);
 
   React.useEffect(() => {
-    if (xtermRef.current) {
-      xtermRef.current.clear();
-      // Write each output line as-is, preserving exact formatting
+    const term = xtermRef.current;
+    if (term) {
+      term.clear();
       output.forEach(line => {
-        xtermRef.current.write(line);
+        term.write(line);
       });
     }
   }, [output]);
