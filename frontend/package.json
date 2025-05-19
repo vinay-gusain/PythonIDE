@@ -1,0 +1,43 @@
+{
+  "name": "pythonide-frontend",
+  "version": "1.0.0",
+  "description": "A modern web-based Python IDE",
+  "main": "index.js",
+  "scripts": {
+    "start": "vite",
+    "build": "tsc && vite build",
+    "serve": "vite preview",
+    "test": "vitest"
+  },
+  "keywords": [
+    "python",
+    "ide",
+    "editor",
+    "online",
+    "coding"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@monaco-editor/react": "^4.7.0",
+    "@mui/icons-material": "^5.14.19",
+    "@mui/material": "^5.14.20",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "uuid": "^9.0.1",
+    "xterm": "^5.3.0",
+    "xterm-addon-fit": "^0.8.0",
+    "xterm-addon-web-links": "^0.9.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@types/uuid": "^9.0.7",
+    "@vitejs/plugin-react": "^4.4.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.4.19",
+    "vitest": "^0.34.6"
+  }
+}

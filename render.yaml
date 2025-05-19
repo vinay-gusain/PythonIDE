@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: pythonide-backend
+    env: python
+    buildCommand: |
+      python -m venv venv
+      . venv/bin/activate
+      pip install -r backend/requirements.txt
+    startCommand: |
+      . venv/bin/activate
+      cd backend
+      uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+    healthCheckPath: /health
+    autoDeploy: true 
