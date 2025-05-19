@@ -1,8 +1,8 @@
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { Box, Button, Stack, IconButton, Tooltip } from '@mui/material';
 import { PlayArrow as RunIcon, ContentCopy as CopyIcon, Delete as ClearIcon } from '@mui/icons-material';
 import Editor, { Monaco } from '@monaco-editor/react';
-import { editor } from 'monaco-editor';
+import * as monaco from 'monaco-editor';
 
 interface EditorProps {
   onRunCode: (code: string) => void;
@@ -19,12 +19,36 @@ def greet(name: str) -> str:
 # Try it out:
 print(greet("World"))`;
 
+// Register Python language
+monaco.languages.register({ id: 'python' });
+
 const CodeEditor: React.FC<EditorProps> = ({ onRunCode }) => {
-  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const monacoRef = useRef<Monaco | null>(null);
   const [code, setCode] = useState<string>(DEFAULT_CODE);
 
-  const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
+  useEffect(() => {
+    if (containerRef.current) {
+      editorRef.current = monaco.editor.create(containerRef.current, {
+        value: '# Write your Python code here\nprint("Hello, World!")',
+        language: 'python',
+        theme: 'vs-dark',
+        automaticLayout: true,
+        minimap: { enabled: false },
+        fontSize: 14,
+        lineNumbers: 'on',
+        scrollBeyondLastLine: false,
+        tabSize: 4,
+      });
+    }
+
+    return () => {
+      editorRef.current?.dispose();
+    };
+  }, []);
+
+  const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor, monaco: Monaco) => {
     editorRef.current = editor;
     monacoRef.current = monaco;
 

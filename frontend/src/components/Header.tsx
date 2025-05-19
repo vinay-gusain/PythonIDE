@@ -1,14 +1,6 @@
 import React from 'react';
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Box,
-  Chip,
-  useTheme,
-  Button,
-} from '@mui/material';
-import { FiberManualRecord as StatusIcon, Refresh as RefreshIcon } from '@mui/icons-material';
+import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import { Refresh as RefreshIcon } from '@mui/icons-material';
 
 interface HeaderProps {
   isConnected: boolean;
@@ -16,22 +8,14 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ isConnected, onRetry }) => {
-  const theme = useTheme();
-
   return (
-    <AppBar position="static" color="default" elevation={1}>
+    <AppBar position="static">
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           PythonIDE
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-            }}
-          >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Box
               sx={{
                 width: 10,
@@ -46,7 +30,8 @@ const Header: React.FC<HeaderProps> = ({ isConnected, onRetry }) => {
           </Box>
           {!isConnected && onRetry && (
             <Button
-              color="inherit"
+              variant="contained"
+              color="primary"
               startIcon={<RefreshIcon />}
               onClick={onRetry}
               size="small"
