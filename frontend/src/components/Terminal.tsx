@@ -68,7 +68,7 @@ const Terminal: React.FC<TerminalProps> = ({ output }) => {
     if (term) {
       term.clear();
       output.forEach(line => {
-        term.write(line);
+        term.writeln(line.replace(/\r?\n$/, ''));
       });
     }
   }, [output]);
